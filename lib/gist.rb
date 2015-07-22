@@ -1,5 +1,6 @@
 require 'net/https'
 require 'cgi'
+require 'fileutils'
 require 'uri'
 
 begin
@@ -43,10 +44,18 @@ module Gist
   # helper module for authentication token actions
   module AuthTokenFile
     def self.filename
-      if ENV.key?(URL_ENV_NAME)
-        File.expand_path "~/.gist.#{ENV[URL_ENV_NAME].gsub(/[^a-z.]/, '')}"
+      if ENV.key?("XDG_DATA_HOME") && ! ENV["XDG_DATA_HOME"].empty?
+        data_home = "#{ENV["XDG_DATA_HOME"]}/gist"
       else
-        File.expand_path "~/.gist"
+        data_home = File.expand_path "~/.local/share/gist"
+      end
+
+      FileUtils.mkdir_p data_home, :mode => 0700
+
+      if ENV.key?(URL_ENV_NAME)
+        "#{data_home}/token.#{ENV[URL_ENV_NAME].gsub(/[^a-z.]/, '')}"
+      else
+        "#{data_home}/token"
       end
     end
 
@@ -88,7 +97,7 @@ module Gist
   # @option options [String] :description  the description
   # @option options [Boolean] :public  (false) is this gist public
   # @option options [Boolean] :anonymous  (false) is this gist anonymous
-  # @option options [String] :access_token  (`File.read("~/.gist")`) The OAuth2 access token.
+  # @option options [String] :access_token  (`File.read("#{ENV["XDG_DATA_HOME"]}/gist/token")`) The OAuth2 access token.
   # @option options [String] :update  the URL or id of a gist to update
   # @option options [Boolean] :copy  (false) Copy resulting URL to clipboard, if successful.
   # @option options [Boolean] :open  (false) Open the resulting URL in a browser.
@@ -319,7 +328,7 @@ module Gist
   # Log the user into gist.
   #
   # This method asks the user for a username and password, and tries to obtain
-  # and OAuth2 access token, which is then stored in ~/.gist
+  # and OAuth2 access token, which is then stored in $XDG_DATA_HOME/gist/token
   #
   # @raise [Gist::Error]  if something went wrong
   # @param [Hash] credentials  login details
