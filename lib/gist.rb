@@ -198,20 +198,27 @@ module Gist
   def list_all_gists(user="", options={})
     url = "#{base_path}"
 
+    # API base endpoint
     if user == ""
-      access_token = auth_token()
-      if access_token.to_s != ''
-        url << "/gists?per_page=100&access_token=" << CGI.escape(access_token)
-      else
-        raise Error, "Not authenticated. Use 'gist --login' to login or 'gist -l username' to view public gists."
-      end
-
+      url << "/gists"
     else
-      url << "/users/#{user}/gists?per_page=100"
+      url << "/users/#{user}/gists"
     end
 
+    # pagination
+    url << "?per_page=100"
+
+    # since
     if options[:since]
       url << "&since=#{options[:since].iso8601}"
+    end
+
+    # authentication
+    access_token = auth_token()
+    if access_token.to_s != ''
+      url << "&access_token=" << CGI.escape(access_token)
+    elsif user == ""
+      raise Error, "Not authenticated. Use 'gist --login' to login or 'gist -l username' to view public gists."
     end
 
     max_number = options[:max_number] ? options[:max_number] : 0
