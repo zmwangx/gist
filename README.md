@@ -8,6 +8,8 @@ upload content to https://gist.github.com/.
 
 ## Fork-specific info
 
+[![Latest Version](https://img.shields.io/gem/v/gistl.svg)](https://rubygems.org/gems/gistl)
+
 This fork enhances [defunkt/gist](https://github.com/defunkt/gist) in the
 following ways:
 
@@ -16,8 +18,11 @@ following ways:
 * Civilized citizen: token is saved to `$XDG_DATA_HOME/gist/token` instead of
   `$HOME/.gist`.
 
-To distinguish ourselves from the original, the version number is always ahead
-of the original by 0.10.0.
+This fork is published to RubyGems.org as
+[`gistl`](https://rubygems.org/gems/gistl).
+
+To distinguish ourselves from the upstream, the version number is always ahead
+of the upstream by 0.10.0.
 
 ## Installation
 
