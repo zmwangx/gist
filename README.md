@@ -6,6 +6,19 @@ gist(1) -- upload code to https://gist.github.com
 The gist gem provides a `gist` command that you can use from your terminal to
 upload content to https://gist.github.com/.
 
+## Fork-specific info
+
+This fork enhances [defunkt/gist](https://github.com/defunkt/gist) in the
+following ways:
+
+* Enhanced listing: additional options `--days`, `--number`, `--pages` for
+  faster and more fine-grained listing;
+* Civilized citizen: token is saved to `$XDG_DATA_HOME/gist/token` instead of
+  `$HOME/.gist`.
+
+To distinguish ourselves from the original, the version number is always ahead
+of the original by 0.10.0.
+
 ## Installation
 
 ‌If you have ruby installed:
