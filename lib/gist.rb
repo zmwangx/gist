@@ -190,6 +190,7 @@ module Gist
   # @param [String] user
   # @param [Hash] options  more detailed options
   #
+  # @option options [DateTime] :since  only list gists updated at or after this time
   # @option options [Integer] :max_number  max number of gists to list
   # @option options [Integer] :max_pages  max number of pages to list
   #
@@ -207,6 +208,10 @@ module Gist
 
     else
       url << "/users/#{user}/gists?per_page=100"
+    end
+
+    if options[:since]
+      url << "&since=#{options[:since].iso8601}"
     end
 
     max_number = options[:max_number] ? options[:max_number] : 0

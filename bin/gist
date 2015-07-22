@@ -4,6 +4,7 @@
 trap('INT'){ exit 1 }
 trap('PIPE', 'EXIT')
 
+require 'date'
 require 'optparse'
 require 'gist'
 
@@ -113,6 +114,11 @@ Usage: #{executable_name} [-o|-c|-e] [-p] [-s] [-R] [-d DESC] [-a] [-u URL] [-P]
 
   opts.on("-l", "--list [USER]", "List gists for user (all by default)") do |user|
     options[:list] = user
+  end
+
+  opts.on("--days [NUMBER]", OptionParser::DecimalInteger,
+          "Only list gists updated in the past NUMBER days (in conjuction with --list)") do |number|
+    options[:since] = DateTime.now - number
   end
 
   opts.on("--number [NUMBER]", OptionParser::DecimalInteger,
