@@ -2,7 +2,10 @@
 
 # Silence Ctrl-C's
 trap('INT'){ exit 1 }
-trap('PIPE', 'EXIT')
+
+if Signal.list.include? 'PIPE'
+  trap('PIPE', 'EXIT')
+end
 
 require 'date'
 require 'optparse'
@@ -47,6 +50,7 @@ original gist with the same GitHub account.
 
 Usage: #{executable_name} [-o|-c|-e] [-p] [-s] [-R] [-d DESC] [-a] [-u URL] [-P] [-f NAME|-t EXT]* FILE*
        #{executable_name} --login
+       #{executable_name} [-l|-r]
 
   EOS
 
@@ -131,6 +135,10 @@ Usage: #{executable_name} [-o|-c|-e] [-p] [-s] [-R] [-d DESC] [-a] [-u URL] [-P]
     options[:max_pages] = pages
   end
 
+  opts.on("-r", "--read ID [FILENAME]", "Read a gist and print out the contents") do |id|
+    options[:read] = id
+  end
+
   opts.on_tail("-h","--help", "Show this message.") do
     puts opts
     exit
@@ -163,6 +171,12 @@ begin
   if options.key? :list
     user = options[:list] ? options[:list] : ""
     Gist.list_all_gists(user, options)
+    exit
+  end
+
+  if options.key? :read
+    file_name = ARGV.first
+    Gist.read_gist(options[:read], file_name)
     exit
   end
 

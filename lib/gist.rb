@@ -13,7 +13,7 @@ end
 module Gist
   extend self
 
-  VERSION = '4.14.2'
+  VERSION = '4.15.0'
 
   # A list of clipboard commands with copy and paste support.
   CLIPBOARD_COMMANDS = {
@@ -237,6 +237,28 @@ module Gist
 
   end
 
+  def read_gist(id, file_name=nil)
+    url = "#{base_path}/gists/#{id}"
+    request = Net::HTTP::Get.new(url)
+    response = http(api_url, request)
+
+    if response.code == '200'
+      body = JSON.parse(response.body)
+      files = body["files"]
+
+      if file_name
+        file = files[file_name]
+        raise Error, "Gist with id of #{id} and file #{file_name} does not exist." unless file
+      else
+        file = files.values.first
+      end
+
+      puts file["content"]
+    else
+      raise Error, "Gist with id of #{id} does not exist."
+    end
+  end
+
   # List gists given an API endpoint
   #
   # Pagination is handled, and all gists are listed by default.
@@ -247,7 +269,6 @@ module Gist
   #
   # see https://developer.github.com/v3/gists/#list-gists
   def get_gist_pages(url, max_number=0, max_pages=0)
-
     request = Net::HTTP::Get.new(url)
     response = http(api_url, request)
     number_listed = pretty_gist(response, max_number)
